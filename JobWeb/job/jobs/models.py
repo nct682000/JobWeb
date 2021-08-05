@@ -72,8 +72,8 @@ class Comment(models.Model):
     content = models.TextField
     created_date = models.DateTimeField(auto_now_add=True)
 
-    candidate = models.ForeignKey(User, related_name='comment_candidate', on_delete=models.CASCADE)
-    recruiter = models.ForeignKey(User, related_name='comment_recruiter', on_delete=models.CASCADE)
+    commenter = models.ForeignKey(User, related_name='comment_candidate', on_delete=models.CASCADE)
+    commented = models.ForeignKey(User, related_name='comment_recruiter', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.content

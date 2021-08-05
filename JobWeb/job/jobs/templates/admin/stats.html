@@ -1,0 +1,21 @@
+{% extends 'admin/base_site.html' %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Trang thống kê báo cáo') }}</a></h1>
+{% endblock %}
+
+{% block content %}
+    <h1>Số tin tuyển dụng: {{ job_count }}</h1>
+    <ul>
+        {%  for s in stats %}
+        <li><h2><strong>{{s.company_name}}</strong>: {{s.recruitment_count}}</h2></li>
+        {%  endfor %}
+    </ul>
+    <br>
+    <h1>Số tin đơn ứng tuyển: {{ apply_count }} ({{ apply_student }} tin của sinh viên)</h1>
+    <ul>
+        {%  for a in apply_stats %}
+        <li><h2><strong>{{a.title}}</strong>: {{a.apply}}</h2></li>
+        {%  endfor %}
+    </ul>
+{%  endblock %}
