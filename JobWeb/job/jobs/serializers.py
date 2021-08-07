@@ -4,7 +4,16 @@ from .models import Recruitment, Criteria, User, Apply
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ["company_name"]
+        fields = ["id", "username", "password", "first_name", "last_name", "sex","email", "phone", "avatar", "role", "company_name"]
+        extra_kwargs = {
+            'password': {'write_only': 'true'}
+        }
+
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class CriteriaSerializer(ModelSerializer):

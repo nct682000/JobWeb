@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('recruitment', views.RecruitmentViewSet)
 router.register('apply', views.ApplyViewSet)
+router.register('user', views.UserViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
