@@ -15,8 +15,29 @@ class Sex(Enum):
     NEUTRAL = 'Giới tính khác'
 
 class Form(Enum):
-    OFFICAL_STAFF = 'Nhân viên chính thức'
-    INTERN = 'Thực tập viên'
+    INTERN = 'Thực tập/Sinh viên'
+    GRADUATED = 'Vừa tốt nghiệp'
+    STAFF = 'Nhân viên'
+    LEADER = 'Trưởng nhóm'
+    MANAGER = 'Quản lý'
+    SENIOR_MANAGER = 'Quản lý cấp cao'
+    EXECUTIVES = 'Giám đốc điều hành'
+
+class Type(Enum):
+    LIKE = 'Like'
+    DISLIKE = 'Dislike'
+
+
+class Province(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class Location(models.Model):
+    address = models.CharField(max_length=100, null=True, blank=True)
+    province = models.ForeignKey(Province, related_name='location_province', on_delete=models.SET_NULL, null=True)
 
 
 class User(AbstractUser):
@@ -26,9 +47,10 @@ class User(AbstractUser):
     sex = models.CharField(max_length=20, choices=[(s.name, s.value) for s in Sex], default=Sex.MALE.value, null=True)
     company_name = models.CharField(max_length=50, null=True, blank=True)
     phone = models.CharField(max_length=12, null=True, blank=True)
-    rate = models.FloatField(default=0)
     role = models.CharField(max_length=20, choices=[(r.name, r.value) for r in Role])
     avatar = models.ImageField(upload_to='avatars/%Y/%m', null=True, blank=True)
+
+    location = models.ForeignKey(Location, related_name='user_location', on_delete=models.SET_NULL, null=True)
 
     # def __str__(self):
     #     if self.role == Role.CADIDATE:
@@ -42,26 +64,40 @@ class User(AbstractUser):
     #         return self.username
 
 
+class Career(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Recruitment(models.Model):
     title = models.CharField(max_length=100)
     salary_from = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
     salary_to = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
-    form = models.CharField(max_length=20, choices=[(f.name, f.value) for f in Form], default=Form.OFFICAL_STAFF.value)
-    experience_from = models.IntegerField(null=True, blank=True)
-    experience_to = models.IntegerField(null=True, blank=True)
+    form = models.CharField(max_length=20, choices=[(f.name, f.value) for f in Form], default=None)
     description = RichTextField(null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
     recruiter = models.ForeignKey(User, related_name='recruitment_recruiter', on_delete=models.SET_NULL, null=True)
-    criteria = models.ManyToManyField('Criteria',related_name='recruitment_criteria', null=True, blank=True)
+    career = models.ForeignKey(Career, related_name='recruitment_career', on_delete=models.SET_NULL, null=True)
+    tag = models.ManyToManyField('Tag',related_name='recruitment_tag', null=True, blank=True)
+    benefit = models.ManyToManyField('Benefit', related_name='recruitment_benefit', null=True, blank=True)
 
     def __str__(self):
         return self.title
 
 
-class Criteria(models.Model):
+class Benefit(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
     content = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -69,7 +105,8 @@ class Criteria(models.Model):
 
 
 class Comment(models.Model):
-    content = models.TextField
+    content = models.TextField()
+    file = models.FileField(upload_to='uploads/comment/%Y/%m', null=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
     commenter = models.ForeignKey(User, related_name='comment_candidate', on_delete=models.CASCADE)
@@ -79,14 +116,32 @@ class Comment(models.Model):
         return self.content
 
 
+class Feedback(Comment):
+    comment = models.ForeignKey(Comment, related_name='feedback_comment', on_delete=models.CASCADE)
+
+
 class Apply(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField
     CV = models.FileField(upload_to='uploads/CV/%Y/%m', null=True)
-    is_student = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     candidate = models.ForeignKey(User, related_name='apply_candidate', on_delete=models.SET_NULL, null=True)
     recruitment = models.ForeignKey(Recruitment, related_name='apply_recruitment', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.title
+
+
+class Interaction(models.Model):
+    type = models.CharField(max_length=20, choices=[(t.name, t.value) for t in Type], default=Type.LIKE.value)
+
+    user = models.ForeignKey(User, related_name='interaction_user', on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, related_name='interaction_comment', on_delete=models.CASCADE)
+
+
+class Rate(models.Model):
+    point = models.IntegerField()
+
+    recruiter = models.ForeignKey(User, related_name='rate_recruiter', on_delete=models.CASCADE)
+    candidate = models.ForeignKey(User, related_name='rate_candidate', on_delete=models.CASCADE)

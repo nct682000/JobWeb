@@ -6,7 +6,10 @@ from django.utils.safestring import mark_safe
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.urls import path
 
-from .models import User, Recruitment, Apply, Comment, Criteria
+from .models import *
+
+class UserLocationInline(admin.TabularInline):
+    model = User.location
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -19,6 +22,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ["username","company_name", "first_name", "last_name"]
     list_filter = ["role"]
     readonly_fields = ["image"]
+    # inlines = (UserLocationInline,)
 
     def image(self, user):
         return mark_safe("<img src='/static/{img_url}' alt='{alt}' width='150' />".format(img_url=user.avatar, alt=user.username))
@@ -31,8 +35,11 @@ class RecruitmentForm(forms.ModelForm):
     description = forms.CharField(widget=CKEditorUploadingWidget)
 
 
-class RecruiterCriteriaInline(admin.TabularInline):
-    model = Recruitment.criteria.through
+class RecruitmentTagInline(admin.TabularInline):
+    model = Recruitment.tag.through
+
+class RecruitmentBenefitInline(admin.TabularInline):
+    model = Recruitment.benefit.through
 
 
 class RecruitmentAdmin(admin.ModelAdmin):
@@ -40,10 +47,10 @@ class RecruitmentAdmin(admin.ModelAdmin):
     search_fields = ["title","recruiter__company_name"]
     list_filter = ["active", "form"]
     form = RecruitmentForm
-    inlines = (RecruiterCriteriaInline, )
+    inlines = (RecruitmentTagInline, RecruitmentBenefitInline,)
 
 
-class CriteriaAdmin(admin.ModelAdmin):
+class TagAdmin(admin.ModelAdmin):
     list_display = ["content"]
     search_fields = ["content"]
 
@@ -79,11 +86,15 @@ admin_site = JobAdminSite('myjobweb')
 # admin.site.register(User, UserAdmin)
 # admin.site.register(Recruitment, RecruitmentAdmin)
 # admin.site.register(Apply)
-# admin.site.register(Criteria)
+# admin.site.register(Tag)
 # admin.site.register(Comment)
 
 admin_site.register(User, UserAdmin)
 admin_site.register(Recruitment, RecruitmentAdmin)
 admin_site.register(Apply)
-admin_site.register(Criteria)
+admin_site.register(Tag)
+admin_site.register(Career)
+admin_site.register(Benefit)
 admin_site.register(Comment)
+admin_site.register(Province)
+admin_site.register(Rate)

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Recruitment, Criteria, User, Apply
+from .models import Recruitment, Tag, User, Apply
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class UserSerializer(ModelSerializer):
 
 class CriteriaSerializer(ModelSerializer):
     class Meta:
-        model = Criteria
+        model = Tag
         fields = ["content"]
 
 

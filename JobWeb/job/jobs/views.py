@@ -4,7 +4,7 @@ from django.views import View
 from rest_framework import viewsets, permissions, generics
 from rest_framework.parsers import MultiPartParser
 
-from .models import Recruitment, User, Criteria, Apply
+from .models import Recruitment, User, Tag, Apply
 from .serializers import RecruitmentSerializer, ApplySerializer, UserSerializer
 
 
