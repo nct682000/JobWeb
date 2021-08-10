@@ -48,9 +48,9 @@ class User(AbstractUser):
     company_name = models.CharField(max_length=50, null=True, blank=True)
     phone = models.CharField(max_length=12, null=True, blank=True)
     role = models.CharField(max_length=20, choices=[(r.name, r.value) for r in Role])
-    avatar = models.ImageField(upload_to='avatars/%Y/%m', null=True, blank=True)
+    avatar = models.ImageField(upload_to='uploads/avatars/%Y/%m', null=True, blank=True)
 
-    location = models.ForeignKey(Location, related_name='user_location', on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey(Location, related_name='user_location', on_delete=models.SET_NULL, null=True, blank=True)
 
     # def __str__(self):
     #     if self.role == Role.CADIDATE:
@@ -122,7 +122,7 @@ class Feedback(Comment):
 
 class Apply(models.Model):
     title = models.CharField(max_length=100)
-    content = models.TextField
+    content = models.TextField(null=True, blank=True)
     CV = models.FileField(upload_to='uploads/CV/%Y/%m', null=True)
     active = models.BooleanField(default=True)
 

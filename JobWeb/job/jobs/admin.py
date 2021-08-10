@@ -8,9 +8,6 @@ from django.urls import path
 
 from .models import *
 
-class UserLocationInline(admin.TabularInline):
-    model = User.location
-
 
 class UserAdmin(admin.ModelAdmin):
     class Media:
@@ -22,7 +19,6 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ["username","company_name", "first_name", "last_name"]
     list_filter = ["role"]
     readonly_fields = ["image"]
-    # inlines = (UserLocationInline,)
 
     def image(self, user):
         return mark_safe("<img src='/static/{img_url}' alt='{alt}' width='150' />".format(img_url=user.avatar, alt=user.username))
@@ -70,7 +66,7 @@ class JobAdminSite(admin.AdminSite):
         apply_count = Apply.objects.count()
         apply_stats = Recruitment.objects.annotate(apply=Count('apply_recruitment'))\
             .values("id", "title", "apply")
-        apply_student = Apply.objects.filter(is_student=True).count()
+        apply_student = Apply.objects.filter(recruitment__form=Form.INTERN).count()
 
         return TemplateResponse(request, 'admin/stats.html', {
             'job_count': job_count,
