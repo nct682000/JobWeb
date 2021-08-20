@@ -8,6 +8,8 @@ from django.urls import path
 
 from .models import *
 
+# class UserLocationInline(admin.TabularInline):
+#     model = User.location.through
 
 class UserAdmin(admin.ModelAdmin):
     class Media:
@@ -19,6 +21,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ["username","company_name", "first_name", "last_name"]
     list_filter = ["role"]
     readonly_fields = ["image"]
+    # inlines = (UserLocationInline,)
 
     def image(self, user):
         return mark_safe("<img src='/static/{img_url}' alt='{alt}' width='150' />".format(img_url=user.avatar, alt=user.username))
@@ -83,7 +86,11 @@ admin_site = JobAdminSite('myjobweb')
 # admin.site.register(Recruitment, RecruitmentAdmin)
 # admin.site.register(Apply)
 # admin.site.register(Tag)
+# admin.site.register(Career)
+# admin.site.register(Benefit)
 # admin.site.register(Comment)
+# admin.site.register(Province)
+# admin.site.register(Rate)
 
 admin_site.register(User, UserAdmin)
 admin_site.register(Recruitment, RecruitmentAdmin)

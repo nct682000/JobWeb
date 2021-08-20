@@ -50,7 +50,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=[(r.name, r.value) for r in Role])
     avatar = models.ImageField(upload_to='uploads/avatars/%Y/%m', null=True, blank=True)
 
-    location = models.ForeignKey(Location, related_name='user_location', on_delete=models.SET_NULL, null=True, blank=True)
+    location = models.OneToOneField(Location, on_delete=models.SET_NULL, null=True, blank=True)
+        # models.ForeignKey(Location, related_name='user_location', on_delete=models.SET_NULL, null=True, blank=True)
 
     # def __str__(self):
     #     if self.role == Role.CADIDATE:
@@ -109,8 +110,8 @@ class Comment(models.Model):
     file = models.FileField(upload_to='uploads/comment/%Y/%m', null=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
-    commenter = models.ForeignKey(User, related_name='comment_candidate', on_delete=models.CASCADE)
-    commented = models.ForeignKey(User, related_name='comment_recruiter', on_delete=models.CASCADE)
+    commenter = models.ForeignKey(User, related_name='commenter', on_delete=models.CASCADE)
+    commented = models.ForeignKey(User, related_name='commented', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.content

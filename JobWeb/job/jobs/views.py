@@ -49,7 +49,7 @@ class ApplyViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
 
-class UserViewSet(viewsets.ViewSet,
+class UserViewSet(viewsets.ViewSet, generics.ListAPIView,
                   generics.CreateAPIView,
                   generics.RetrieveAPIView,
                   generics.UpdateAPIView):
