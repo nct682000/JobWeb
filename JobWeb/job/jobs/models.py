@@ -125,6 +125,7 @@ class Apply(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(null=True, blank=True)
     CV = models.FileField(upload_to='uploads/CV/%Y/%m', null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
 
     candidate = models.ForeignKey(User, related_name='apply_candidate', on_delete=models.SET_NULL, null=True)

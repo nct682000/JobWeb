@@ -7,6 +7,11 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('recruitment', views.RecruitmentViewSet)
 router.register('apply', views.ApplyViewSet)
+router.register('comment', views.CommentViewSet)
+router.register('career', views.CareerViewSet)
+router.register('province', views.ProvinceViewSet)
+router.register('tag', views.TagViewSet)
+router.register('benefit', views.BenefitViewSet)
 router.register('user', views.UserViewSet)
 
 urlpatterns = [

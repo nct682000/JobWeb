@@ -1,11 +1,14 @@
+from threading import activeCount
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
 from rest_framework import viewsets, permissions, generics
 from rest_framework.parsers import MultiPartParser
 
-from .models import Recruitment, User, Tag, Apply
-from .serializers import RecruitmentSerializer, ApplySerializer, UserSerializer
+from .models import *
+from .serializers import RecruitmentSerializer, ApplySerializer, UserSerializer, TagSerializer, BenefitSerializer, \
+    CommentSerializer, CareerSerializer, ProvinceSerializer
 
 
 def index(request):
@@ -39,7 +42,7 @@ class RecruitmentViewSet(viewsets.ModelViewSet):
 
 
 class ApplyViewSet(viewsets.ModelViewSet):
-    queryset = Apply.objects.all()
+    queryset = Apply.objects.filter(active=True)
     serializer_class = ApplySerializer
 
     def get_permissions(self):
@@ -53,7 +56,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView,
                   generics.CreateAPIView,
                   generics.RetrieveAPIView,
                   generics.UpdateAPIView):
-    queryset = User.objects.filter(is_active= True)
+    queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     parser_classes = [MultiPartParser, ]
 
@@ -62,4 +65,31 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView,
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class BenefitViewSet(viewsets.ModelViewSet):
+    queryset = Benefit.objects.all()
+    serializer_class = BenefitSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+class CareerViewSet(viewsets.ModelViewSet):
+    queryset = Career.objects.all()
+    serializer_class = CareerSerializer
+
+
+class ProvinceViewSet(viewsets.ModelViewSet):
+    queryset = Province.objects.all()
+    serializer_class = ProvinceSerializer
+
+
 
